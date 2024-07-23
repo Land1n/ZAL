@@ -1,10 +1,10 @@
 import flet as ft
 
 
-class TrainCard(ft.Card):
-    def __init__(self,title:str,subtitle:str):
+class TrainingCard(ft.Card):
+    def __init__(self,id:int,title:str,subtitle:str):
         super().__init__()
-        self.margin = 0
+        self.id = id
         self.content=ft.Container(
             content=ft.Column(
                 [
@@ -21,7 +21,7 @@ class TrainCard(ft.Card):
                         ),
                     ),
                     ft.Row(
-                        [ft.TextButton("Начать тренировка")],
+                        [ft.TextButton("Подробнее",on_click=lambda _:self.page.go(f"/train/{self.id}"))],
                         alignment=ft.MainAxisAlignment.END,
                     ),
                 ]
@@ -29,90 +29,103 @@ class TrainCard(ft.Card):
             height=125,
             padding=10,
         )
-    
-    @property
-    def card_height(self):
-        return self.content.height
 
-class MyAppBar(ft.AppBar):
-    def __init__(self,page:ft.Page,drawer = None):
+class HomeView(ft.View):
+    def __init__(self,page:ft.Page):
         super().__init__()
         self.page = page
-        self.leading=ft.IconButton(icon=ft.icons.MENU,on_click=self.open_drawer)
-        self.title=ft.Text("ZAL")
-        self.center_title=True
-        self.actions=[ft.IconButton(icon=ft.icons.ADD) ]
-        if drawer != None:
-            self._drawer = drawer
-        else:
-            self._drawer = None
-        
-    
-    def open_drawer(self,e):
-        if self._drawer != None:
-            self.page.open(self._drawer)
-        else:
-            print(f"{self.drawer=}")
-        return None
-    @property
-    def drawer(self):
-        if self._drawer != None:
-            return self._drawer
-        return None
+        self.route = '/home'
+        self.drawer = ft.NavigationDrawer(
+            selected_index=-1,
+            controls=[
+                ft.Container(height=12),
+                ft.NavigationDrawerDestination(
+                    label="User",
+                    icon_content=ft.CircleAvatar(
+                        content=ft.Text('A'),
+                    ),
+                                    
+                ),
+                ft.Divider(thickness=2),
+                ft.NavigationDrawerDestination(
+                    icon_content=ft.Icon(ft.icons.SETTINGS),
+                    label="Настройки",
+                ),
+                ft.NavigationDrawerDestination(
+                    icon_content=ft.Icon(ft.icons.SETTINGS),
+                    label="Настройки",
+                ),
+            ],
+        )
+        self.appbar = ft.AppBar(
+            leading = ft.IconButton(icon=ft.icons.MENU, on_click=lambda _: self.page.open(self.drawer)),
+            title = ft.Text("ZAL"),
+            center_title = True,
+            actions = [ft.IconButton(icon=ft.icons.ADD)]
+        )    
+        self.controls = [
+             ft.Column(
+                [TrainingCard(i,str(i),'...') for i in range(1, 6)],
+                scroll=ft.ScrollMode.HIDDEN,
+                height = page.height*0.9
+            )
+        ]
 
-    @drawer.setter
-    def drawer(self,drawer):
-        self._drawer = drawer
+class TrainingView(ft.View):
+    def __init__(self,page:ft.Page,id:int):
+        super().__init__()
+        self.page = page
+        self.id = id
+        self.controls = [
+                ft.Text(str(self.id))
+                ]
+        self.appbar = ft.AppBar(
+            leading=ft.IconButton(ft.icons.ARROW_BACK,on_click=self.view_pop),
+            title=ft.Text('Тренировка'),
+            actions=[ft.IconButton(ft.icons.START)]
+        )
+    def view_pop(self,view):
+        self.page.views.pop()
+        top_view = self.page.views[-1]
+        self.page.go(top_view.route)
+class Router:
+    def __init__(self,page:ft.Page):
+        self.page = page
+        self.home_view = HomeView(self.page)
+    def route_change(self,route):
+        self.page.views.clear()
+
+        troute = ft.TemplateRoute(self.page.route)
+        self.page.views.append(self.home_view)
+
+        if troute.match("/train/:id"):
+            self.page.views.append(TrainingView(self.page,troute.id))
+        self.page.update()
+
+    def view_pop(self,view):
+        self.page.views.pop()
+        top_view = self.page.views[-1]
+        self.page.go(top_view.route)
+
 
 
 
 def main(page:ft.Page):
     page.title = 'ZAL'
+    router = Router(page)
 
+    # def resized(*arg):
+    #     cl.height = page.height*0.9
+    #     print( cl.height)
+    #     cl.update()
+    #     page.update()
 
+    # # page.on_resized = resized
 
+    page.on_route_change = router.route_change
+    page.on_view_pop = router.view_pop
 
-    drawer = ft.NavigationDrawer(
-        selected_index=-1,
-        controls=[
-            ft.Container(height=12),
-            ft.NavigationDrawerDestination(
-                label="User",
-                icon_content=ft.CircleAvatar(
-                    content=ft.Text('A'),
-                ),
-                                
-            ),
-            ft.Divider(thickness=2),
-            ft.NavigationDrawerDestination(
-                icon_content=ft.Icon(ft.icons.SETTINGS),
-                label="Настройки",
-            ),
-            ft.NavigationDrawerDestination(
-                icon_content=ft.Icon(ft.icons.SETTINGS),
-                label="Настройки",
-            ),
-        ],
-    )
-    
-    page.appbar = MyAppBar(page,drawer)
-    cl = ft.Column(
-        scroll=ft.ScrollMode.HIDDEN,
-        height = page.height*0.9
-    )
-    def resized(*arg):
-        cl.height = page.height*0.9
-        print( cl.height)
-        cl.update()
-        page.update()
-
-    
-    page.on_resized = resized
-    for i in range(1, 7):
-        w = TrainCard(str(i),'...')
-        cl.controls.append(w)
-
-    page.add(cl)
+    page.go(page.route)
 
 
 
