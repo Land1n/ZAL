@@ -5,6 +5,16 @@
         "subtitle":"Примерная продолжительность тренировки: 1.5 часа",
         "annotation":"Не забывайте отдыхать между подходами",
         "avatar_color":"red700",
-        "exercises":[]
+        "exercises":[
+            {
+                "id":1,
+                "title":"Подтягивания",
+                "annotation":"Своди лопатки",
+                "round":5, 
+                "weight":0,
+                "repetitions":15, 
+                "time":4
+            }
+        ]
     }
 ]

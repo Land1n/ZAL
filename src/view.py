@@ -1,6 +1,6 @@
 import flet as ft
 
-from src.UI import WorkoutCard
+from src.UI import WorkoutCard, ExerciseCard
 from src.database import get_data_workouts
 from src.schemes import Workout
 
@@ -22,9 +22,11 @@ class HomeView(BaseView):
             actions = [ft.IconButton(icon=ft.icons.ADD)]
         )    
         workouts = get_data_workouts()
+        self.lv = ft.ListView(expand=1)
+        self.controls = [self.lv]
         for workout in workouts:
             workout = Workout(**workout)
-            self.controls.append(WorkoutCard(workout.id,workout.title,workout.subtitle,workout.avatar_color))
+            self.lv.controls.append(WorkoutCard(workout.id,workout.title,workout.subtitle,workout.avatar_color))
 class WorkoutView(BaseView):
     def __init__(self,page:ft.Page,id:int):
         super().__init__()
@@ -38,11 +40,15 @@ class WorkoutView(BaseView):
         self.workout = Workout(**(get_data_workouts(self.id)[0]))
         self.controls = [
             ft.Text(self.workout.title,size=40),
-            ft.Text(self.workout.subtitle),
+            ft.Text(self.workout.subtitle,color="grey"),
             ft.Divider(),
             ft.Text("Список упражнений",size=30),
 
         ]
+        self.lv = ft.ListView(expand=1)
+        self.controls.append(self.lv)
+        self.lv.controls += [ExerciseCard(**exercise) for exercise in self.workout.exercises]
+
         if self.workout.annotation:
             self.controls.insert(2,ft.Card(
                 content=ft.Container(
