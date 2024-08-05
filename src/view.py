@@ -1,16 +1,16 @@
 import flet as ft
 
-from src.UI import WorkoutCard, ExerciseCard
 from src.database import get_data_workouts
-from src.schemes import Workout
 
-class BaseView(ft.View):
-    def view_pop(self,view):
-        self.page.views.pop()
-        top_view = self.page.views[-1]
-        self.page.go(top_view.route)
+from src.workout.schemes import Workout
+from src.workout.UI import WorkoutCard
 
-class HomeView(BaseView):
+def view_pop(page:ft.Page,view):
+    page.views.pop()
+    top_view = page.views[-1]
+    page.go(top_view.route)
+
+class HomeView(ft.View):
     def __init__(self,page:ft.Page):
         super().__init__()
         self.page = page
@@ -27,40 +27,3 @@ class HomeView(BaseView):
         for workout in workouts:
             workout = Workout(**workout)
             self.lv.controls.append(WorkoutCard(workout.id,workout.title,workout.subtitle,workout.avatar_color))
-class WorkoutView(BaseView):
-    def __init__(self,page:ft.Page,id:int):
-        super().__init__()
-        self.page = page
-        self.id = id
-        self.appbar = ft.AppBar(
-            leading=ft.IconButton(ft.icons.ARROW_BACK,on_click=self.view_pop),
-            title=ft.Text('Тренировка'),
-            # actions=[ft.IconButton(ft.icons.START)]
-        )
-        self.workout = Workout(**(get_data_workouts(self.id)[0]))
-        self.controls = [
-            ft.Text(self.workout.title,size=40),
-            ft.Text(self.workout.subtitle,color="grey"),
-            ft.Divider(),
-            ft.Text("Список упражнений",size=30),
-
-        ]
-        self.lv = ft.ListView(expand=1)
-        self.controls.append(self.lv)
-        self.lv.controls += [ExerciseCard(**exercise) for exercise in self.workout.exercises]
-
-        if self.workout.annotation:
-            self.controls.insert(2,ft.Card(
-                content=ft.Container(
-                    content=ft.Column(
-                        [
-                            ft.ListTile(
-                                leading=ft.Icon(ft.icons.INFO),
-                                title=ft.Text("Важные моменты"),
-                                subtitle=ft.Text(self.workout.annotation),
-                            ),
-                        ]
-                    ),
-                    padding=10,
-                )
-            ))

@@ -1,6 +1,8 @@
 import flet as ft
 
-from src.view import HomeView,WorkoutView
+from src.view import HomeView
+
+from src.workout.view import WorkoutView
 
 class Router:
     def __init__(self,page:ft.Page):

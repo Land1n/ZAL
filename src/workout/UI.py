@@ -1,5 +1,7 @@
 import flet as ft
 
+from src.workout.schemes import Round 
+
 class WorkoutCard(ft.Card):
     def __init__(self,id:int,title:str,subtitle:str,avatar_color:str):
         super().__init__()
@@ -26,14 +28,16 @@ class WorkoutCard(ft.Card):
         )
 
 class ExerciseCard(ft.Card):
-    def __init__(self,id:int,title:str,annotation:str,round:int,weight:int,repetitions:int,time:int):
+    def __init__(self,id:int,title:str,annotation:str,rounds:Round):
         super().__init__()
+        first_round = Round(**rounds[0])
         self.content=ft.Container(
+            padding=10,
             content=ft.Column(
-                [
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
                     ft.ListTile(
                         title=ft.Text(title,size=25),
-                        subtitle=ft.Text(f"Подходы: {round}, Повторения: {repetitions},\nДоп. вес: {weight} кг. , Время отдыха: {time} мин.",color='grey'),
                         trailing=ft.PopupMenuButton(
                             icon=ft.icons.MORE_VERT,
                             items=[
@@ -41,6 +45,43 @@ class ExerciseCard(ft.Card):
                                 ft.PopupMenuItem(text="Удалить"),
                             ],
                         ),
+                    ),
+                    # ft.Divider(),
+                    ft.Container(
+                        padding=ft.Padding(20,0,0,0),    
+                        content=ft.Column(
+                            controls=[
+                                ft.Text("Первый поход",size=15),
+                                ft.Row(
+                                    controls=[
+                                        ft.Text("Повторения:",color="grey"),
+                                        ft.Card(
+                                            content=ft.Container(
+                                                content=ft.Text(first_round.repetitions,color="blue200"),
+                                                padding=10,
+                                                bgcolor="grey900",
+                                                border_radius=10)
+                                            ),
+                                        ft.Text("Доп. вес:",color="grey"),
+                                        ft.Card(
+                                            content=ft.Container(
+                                                content=ft.Text(f"{first_round.weight} кг.",color="blue200"),
+                                                padding=10,
+                                                bgcolor="grey900",
+                                                border_radius=10)
+                                            ),
+                                        ft.Text("Время отдыха:",color="grey"),
+                                        ft.Card(
+                                            content=ft.Container(
+                                                content=ft.Text(f"{first_round.time} мин.",color="blue200"),
+                                                padding=10,
+                                                bgcolor="grey900",
+                                                border_radius=10)
+                                            ),                                            
+                                        ]
+                                ),
+                            ]
+                        )
                     ),
                     ft.Divider(),
                     ft.ExpansionTile(
@@ -55,22 +96,12 @@ class ExerciseCard(ft.Card):
                                     ft.DataColumn(ft.Text("Повторения"), numeric=True),
                                     ft.DataColumn(ft.Text("Время отдыха"), numeric=True),
                                 ],
-                                rows=[
-                                    ft.DataRow(
-                                        cells=[
-                                            ft.DataCell(ft.Text(weight)),
-                                            ft.DataCell(ft.Text(repetitions)),
-                                            ft.DataCell(ft.Text(time)),
-                                        ],
-                                    )
-                                    for i in range(round)
-                                ],
+                                rows=[RoundDataRow(**round) for round in rounds],
                             ),
                         ],
                     )
                 ],
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            padding=10,
+            ),
         )
         if annotation != "":
             self.content.content.controls += [ft.ExpansionTile(
@@ -81,3 +112,13 @@ class ExerciseCard(ft.Card):
                             maintain_state=True,
                             controls=[ft.ListTile(title=ft.Text(annotation))],
                         )]
+
+class RoundDataRow(ft.DataRow):
+    def __init__(self,id:int,weight:int,repetitions:int,time:int):
+        
+        self.cells = [
+            ft.DataCell(ft.Text(weight)),
+            ft.DataCell(ft.Text(repetitions)),
+            ft.DataCell(ft.Text(time)),
+        ]
+        super().__init__(cells=self.cells)

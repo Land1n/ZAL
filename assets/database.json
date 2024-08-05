@@ -1,20 +1,51 @@
-[
-    {
-        "id":1,
-        "title":"Спина и руки",
-        "subtitle":"Примерная продолжительность тренировки: 1.5 часа",
-        "annotation":"Не забывайте отдыхать между подходами",
-        "avatar_color":"red700",
-        "exercises":[
-            {
-                "id":1,
-                "title":"Подтягивания",
-                "annotation":"Своди лопатки",
-                "round":5, 
-                "weight":0,
-                "repetitions":15, 
-                "time":4
-            }
-        ]
-    }
-]
+{
+    "last_id":0,
+    "workouts":[
+        {
+            "id":1,
+            "title":"Спина и руки",
+            "subtitle":"Примерная продолжительность тренировки: 1.5 часа",
+            "annotation":"",
+            "avatar_color":"red700",
+            "exercises":[
+                {
+                    "id":2,
+                    "title":"Подтягивания",
+                    "annotation":"",
+                    "rounds":[
+                        {
+                            "id":3,
+                            "weight":0,
+                            "repetitions":15, 
+                            "time":4
+                        },
+                        {
+                            "id":4,
+                            "weight":0,
+                            "repetitions":15, 
+                            "time":4
+                        },
+                        {
+                            "id":5,
+                            "weight":0,
+                            "repetitions":15, 
+                            "time":4
+                        },
+                        {
+                            "id":6,
+                            "weight":0,
+                            "repetitions":15, 
+                            "time":4
+                        },
+                        {
+                            "id":7,
+                            "weight":0,
+                            "repetitions":15, 
+                            "time":4
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}    

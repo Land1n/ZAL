@@ -2,6 +2,8 @@ import flet as ft
 
 from src.router import Router 
 
+from src.view import view_pop
+
 def main(page:ft.Page):
     page.title = 'ZAL'
     router = Router(page)
@@ -10,7 +12,7 @@ def main(page:ft.Page):
     }
 
     page.on_route_change = router.route_change
-
+    page.on_view_pop = view_pop
     page.go(page.route)
 
 
