@@ -1,8 +1,8 @@
 import flet as ft
 
-from src.router import Router 
+from src.router import Router
 
-from src.view import view_pop
+from src.utils import view_pop
 
 def main(page:ft.Page):
     page.title = 'ZAL'

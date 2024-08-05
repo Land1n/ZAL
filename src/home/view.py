@@ -5,11 +5,6 @@ from src.database import get_data_workouts
 from src.workout.schemes import Workout
 from src.workout.UI import WorkoutCard
 
-def view_pop(page:ft.Page,view):
-    page.views.pop()
-    top_view = page.views[-1]
-    page.go(top_view.route)
-
 class HomeView(ft.View):
     def __init__(self,page:ft.Page):
         super().__init__()
@@ -19,7 +14,7 @@ class HomeView(ft.View):
             leading = ft.IconButton(icon=ft.icons.MENU, on_click=lambda _: self.page.open(self.drawer)),
             title = ft.Text("ZAL",size=30,font_family="Dimkin Regular"),
             center_title = True,
-            actions = [ft.IconButton(icon=ft.icons.ADD)]
+            actions = [ft.IconButton(icon=ft.icons.ADD, on_click=lambda _:self.page.go(f"/workout/create"),)]
         )    
         workouts = get_data_workouts()
         self.lv = ft.ListView(expand=1)

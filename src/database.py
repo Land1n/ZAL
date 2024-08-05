@@ -12,3 +12,7 @@ def get_id_for_obj() -> int:
     with open('assets/database.json', encoding='utf-8') as f:
         data = json.load(f)
         return data["last_id"]
+
+def set_data_workout(data:dict):
+    with open('assets/database.json', encoding='utf-8') as f:
+        f.write(json.dumps(data))

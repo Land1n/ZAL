@@ -1,8 +1,8 @@
 import flet as ft
 
-from src.view import HomeView
+from src.home.view import HomeView
 
-from src.workout.view import WorkoutView
+from src.workout.view import WorkoutReadView,WorkoutCreateView
 
 class Router:
     def __init__(self,page:ft.Page):
@@ -14,6 +14,8 @@ class Router:
         troute = ft.TemplateRoute(self.page.route)
         self.page.views.append(self.home_view)
 
-        if troute.match("/train/:id"):
-            self.page.views.append(WorkoutView(self.page,troute.id))
+        if troute.match("/workout/:id"):
+            self.page.views.append(WorkoutReadView(self.page,troute.id))
+        if troute.match("/workout/create"):
+            self.page.views.append(WorkoutCreateView(self.page))    
         self.page.update()

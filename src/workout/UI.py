@@ -20,7 +20,7 @@ class WorkoutCard(ft.Card):
                                 ft.PopupMenuItem(text="Удалить"),
                             ],
                         ),
-                        on_click=lambda _:self.page.go(f"/train/{self.id}"),
+                        on_click=lambda _:self.page.go(f"/workout/{self.id}"),
                     ),
                 ]
             ),
