@@ -28,6 +28,23 @@ class WorkoutCard(ft.Card):
         )
 
 class ExerciseCard(ft.Card):
+    class FirstRoundItem(ft.Row):
+        def __init__(self, text:str,first_round:Round,subtext=''):
+            super().__init__(
+                col={"xs":2,"sm":4},
+                controls=[
+                    ft.Text(text,color="grey"),
+                    ft.Card(
+                        content=ft.Container(
+                            content=ft.Text(f"{first_round.weight}{subtext}",color="blue200"),
+                            padding=10,
+                            bgcolor="grey900",
+                            border_radius=10,
+                            ),
+                    ),
+                ]
+            )
+
     def __init__(self,id:int,title:str,annotation:str,rounds:Round):
         super().__init__()
         first_round = Round(**rounds[0])
@@ -52,33 +69,13 @@ class ExerciseCard(ft.Card):
                         content=ft.Column(
                             controls=[
                                 ft.Text("Первый поход",size=15),
-                                ft.Row(
+                                ft.ResponsiveRow(
+                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                     controls=[
-                                        ft.Text("Повторения:",color="grey"),
-                                        ft.Card(
-                                            content=ft.Container(
-                                                content=ft.Text(first_round.repetitions,color="blue200"),
-                                                padding=10,
-                                                bgcolor="grey900",
-                                                border_radius=10)
-                                            ),
-                                        ft.Text("Доп. вес:",color="grey"),
-                                        ft.Card(
-                                            content=ft.Container(
-                                                content=ft.Text(f"{first_round.weight} кг.",color="blue200"),
-                                                padding=10,
-                                                bgcolor="grey900",
-                                                border_radius=10)
-                                            ),
-                                        ft.Text("Время отдыха:",color="grey"),
-                                        ft.Card(
-                                            content=ft.Container(
-                                                content=ft.Text(f"{first_round.time} мин.",color="blue200"),
-                                                padding=10,
-                                                bgcolor="grey900",
-                                                border_radius=10)
-                                            ),                                            
-                                        ]
+                                        self.FirstRoundItem("Повторения:",first_round),
+                                        self.FirstRoundItem("Доп. вес:",first_round," кг."),
+                                        self.FirstRoundItem("Повторения:",first_round," мин."),
+                                    ]    
                                 ),
                             ]
                         )

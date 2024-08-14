@@ -14,8 +14,9 @@ class Router:
         troute = ft.TemplateRoute(self.page.route)
         self.page.views.append(self.home_view)
 
-        if troute.match("/workout/:id"):
-            self.page.views.append(WorkoutReadView(self.page,troute.id))
+
         if troute.match("/workout/create"):
             self.page.views.append(WorkoutCreateView(self.page))    
+        elif troute.match("/workout/:id"):
+            self.page.views.append(WorkoutReadView(self.page,troute.id))
         self.page.update()

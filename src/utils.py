@@ -14,3 +14,36 @@ class BackButton(ft.IconButton):
             icon=ft.icons.ARROW_BACK,
             on_click=partial(view_pop,page),
         )
+
+
+class ClassicalFilledButton(ft.CupertinoFilledButton):
+    def __init__(self,obj=None,on_click=None) -> None:
+        self.obj = []
+        if isinstance(obj,str):
+            self.obj += [ft.Text(obj)]
+        elif isinstance(obj,list):
+            self.obj = obj
+        super().__init__(
+            on_click=on_click,
+            opacity_on_click=0.3,
+            content=ft.Row(
+                alignment=ft.MainAxisAlignment.CENTER,
+                controls=self.obj 
+            )
+        )
+
+
+class ClassicalTextButton(ft.TextButton):
+    def __init__(self,obj=None,on_click=None) -> None:
+        self.obj = []
+        if isinstance(obj,str):
+            self.obj += [ft.Text(obj)]
+        elif isinstance(obj,list):
+            self.obj = obj
+        super().__init__(
+            on_click=on_click,
+            content=ft.Row(
+                alignment=ft.MainAxisAlignment.CENTER,
+                controls=self.obj 
+            )
+        )
