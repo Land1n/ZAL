@@ -10,10 +10,10 @@ def main(page:ft.Page):
     page.fonts = {
         "Dimkin Regular": "fonts/Dimkin Regular.ttf",
     }
-
     page.on_route_change = router.route_change
     page.on_view_pop = view_pop
-    page.go(page.route)
+    page.views.clear()
+    page.go("/home")
 
 
 

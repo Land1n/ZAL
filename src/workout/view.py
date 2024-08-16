@@ -1,6 +1,8 @@
 import flet as ft
 import flet_core
 
+from repath import match
+
 from src.database import get_data_workouts
 
 from src.workout.schemes import Workout
@@ -9,10 +11,11 @@ from src.workout.UI import ExerciseCard
 from src.utils import BackButton, ClassicalFilledButton,ClassicalTextButton
 
 class WorkoutReadView(ft.View):
-    def __init__(self,page:ft.Page,id:int):
+    def __init__(self,page:ft.Page):
         super().__init__()
         self.page = page
-        self.id = id
+        self.id = match("/workout/:id",self.page.route).group()[0]
+        self.route = f'/workout/{self.id}'
         self.appbar = ft.AppBar(
             leading=BackButton(self.page),
             title=ft.Text('Тренировка'),
@@ -50,7 +53,7 @@ class WorkoutCreateView(ft.View):
         super().__init__()
         self.page = page
         self.workout_data = {}
-
+        self.route = f'/workout/create'
         self.appbar = ft.AppBar(
             leading=BackButton(self.page),
             title=ft.Text('Создание тренировки'),
@@ -58,23 +61,23 @@ class WorkoutCreateView(ft.View):
 
         self.column_with_rounds = ft.Ref[ft.Column]()
 
-        dlg = ft.AlertDialog(
-            title=ft.Text("Добавить упражнение"),
-            content=ft.Column(
-                tight=True,
-                scroll=ft.ScrollMode.ALWAYS,
-                ref=self.column_with_rounds,
-                controls=[
-                    ft.TextField(label="Название упражнения"),
-                    ft.Divider(),
-                    ClassicalTextButton([ft.Icon('ADD'),ft.Text("Добавить подход")],on_click=self.add_round)
-                ],
-            ),
-            actions=[
-                ClassicalFilledButton(obj=[ft.Icon('ADD'),ft.Text("Добавить упражнение")],on_click=self.add_exercise)
-            ],
-            # on_dismiss=
-        ) 
+        # dlg = ft.AlertDialog(
+        #     title=ft.Text("Добавить упражнение"),
+        #     content=ft.Column(
+        #         tight=True,
+        #         scroll=ft.ScrollMode.ALWAYS,
+        #         ref=self.column_with_rounds,
+        #         controls=[
+        #             ft.TextField(label="Название упражнения"),
+        #             ft.Divider(),
+        #             ClassicalTextButton([ft.Icon('ADD'),ft.Text("Добавить подход")],on_click=self.add_round)
+        #         ],
+        #     ),
+        #     actions=[
+        #         ClassicalFilledButton(obj=[ft.Icon('ADD'),ft.Text("Добавить упражнение")],on_click=self.add_exercise)
+        #     ],
+        #     # on_dismiss=
+        # ) 
 
         self.controls = [
             ft.ListView(expand=1,
@@ -93,7 +96,7 @@ class WorkoutCreateView(ft.View):
                                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                             controls=[
                                                 ft.Text("Список упражнений:",size=20),
-                                                ft.IconButton(icon="ADD",on_click=lambda _:self.page.open(dlg)),
+                                                ft.IconButton(icon="ADD",on_click=lambda _:self.page.go("/workout/create/exercise")),
                                             ]
                                         ), 
                                         affinity=ft.TileAffinity.LEADING,
@@ -117,27 +120,41 @@ class WorkoutCreateView(ft.View):
         ]
     def add_round(self,*arg):
         self.column_with_rounds.current.controls.insert(-1,
-            ft.ListTile(
-                title=ft.Row(
-                    controls=[
-                        ft.TextField(
-                            label="Повторения",
-                            label_style=ft.TextStyle(size=15),
-                            width=100
-                        ),
-                        ft.TextField(
-                            label="Вес",
-                            width=100
-                        ),
-                        ft.TextField(
-                            label="Время отдыха",
-                            width=100
-                        ),
-                    ]
+                ft.Row(
+                    tight=True,
+                    # controls=[
+                    #     ft.TextField(
+                    #         label="Повторения",
+                    #         # label_style=ft.TextStyle(size=15),
+                    #         border=ft.InputBorder.NONE,
+                    #         filled=True,
+                    #     ),
+                    #     ft.TextField(
+                    #         label="Вес",
+                    #         border=ft.InputBorder.NONE,
+                    #         filled=True,
+                    #     ),
+                    #     ft.TextField(
+                    #         label="Время отдыха",
+                    #         border=ft.InputBorder.NONE,
+                    #         filled=True,
+                    #     ),
+                    # ]
                 )
             )
-        )
+        
         self.column_with_rounds.current.update()
         self.page.update()
     def add_exercise(self,*arg):
         pass
+
+class ExerciseCreateView(ft.View):
+    def __init__(self,page:ft.Page,exercise_data:dict = {},troute:ft.TemplateRoute = None) -> None:
+        super().__init__()
+        self.page = page
+        self.route = f'/workout/create/exercise'
+        self.exercise_data = exercise_data
+        self.appbar = ft.AppBar(
+            leading=BackButton(self.page),
+            title=ft.Text('Добавить упражнение'),
+        )   
