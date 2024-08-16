@@ -27,6 +27,6 @@ class Router:
         })
 
     def route_change(self,route):
-        if not [i.route for i in self.page.views if i.route == route]:
+        if not [view for view in self.page.views if view.route == route.route]:
             self.page.views.append(self.routes[route.route](self.page))
         self.page.update()

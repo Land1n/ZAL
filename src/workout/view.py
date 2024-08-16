@@ -3,7 +3,7 @@ import flet_core
 
 from repath import match
 
-from src.database import get_data_workouts
+from src.database import get_data_workouts,get_last_id,update_last_id
 
 from src.workout.schemes import Workout
 from src.workout.UI import ExerciseCard
@@ -14,7 +14,7 @@ class WorkoutReadView(ft.View):
     def __init__(self,page:ft.Page):
         super().__init__()
         self.page = page
-        self.id = match("/workout/:id",self.page.route).group()[0]
+        self.id = int(match("/workout/:id",self.page.route).groupdict()["id"])
         self.route = f'/workout/{self.id}'
         self.appbar = ft.AppBar(
             leading=BackButton(self.page),
@@ -58,27 +58,6 @@ class WorkoutCreateView(ft.View):
             leading=BackButton(self.page),
             title=ft.Text('Создание тренировки'),
         )   
-
-        self.column_with_rounds = ft.Ref[ft.Column]()
-
-        # dlg = ft.AlertDialog(
-        #     title=ft.Text("Добавить упражнение"),
-        #     content=ft.Column(
-        #         tight=True,
-        #         scroll=ft.ScrollMode.ALWAYS,
-        #         ref=self.column_with_rounds,
-        #         controls=[
-        #             ft.TextField(label="Название упражнения"),
-        #             ft.Divider(),
-        #             ClassicalTextButton([ft.Icon('ADD'),ft.Text("Добавить подход")],on_click=self.add_round)
-        #         ],
-        #     ),
-        #     actions=[
-        #         ClassicalFilledButton(obj=[ft.Icon('ADD'),ft.Text("Добавить упражнение")],on_click=self.add_exercise)
-        #     ],
-        #     # on_dismiss=
-        # ) 
-
         self.controls = [
             ft.ListView(expand=1,
                 controls=[
@@ -118,35 +97,6 @@ class WorkoutCreateView(ft.View):
                 ]
             ),
         ]
-    def add_round(self,*arg):
-        self.column_with_rounds.current.controls.insert(-1,
-                ft.Row(
-                    tight=True,
-                    # controls=[
-                    #     ft.TextField(
-                    #         label="Повторения",
-                    #         # label_style=ft.TextStyle(size=15),
-                    #         border=ft.InputBorder.NONE,
-                    #         filled=True,
-                    #     ),
-                    #     ft.TextField(
-                    #         label="Вес",
-                    #         border=ft.InputBorder.NONE,
-                    #         filled=True,
-                    #     ),
-                    #     ft.TextField(
-                    #         label="Время отдыха",
-                    #         border=ft.InputBorder.NONE,
-                    #         filled=True,
-                    #     ),
-                    # ]
-                )
-            )
-        
-        self.column_with_rounds.current.update()
-        self.page.update()
-    def add_exercise(self,*arg):
-        pass
 
 class ExerciseCreateView(ft.View):
     def __init__(self,page:ft.Page,exercise_data:dict = {},troute:ft.TemplateRoute = None) -> None:
@@ -158,3 +108,31 @@ class ExerciseCreateView(ft.View):
             leading=BackButton(self.page),
             title=ft.Text('Добавить упражнение'),
         )   
+        self.exercise = {}
+
+        self.dlg = ft.AlertDialog(
+            title=ft.Text("Добавить поход"),
+            content=ft.Column(
+                tight=True,
+                controls=[
+                    ft.TextField(label="Количество повторений"),
+                    ft.TextField(label="Вес"),
+                    ft.TextField(label="Время отдыха"),
+                ]
+            ),
+            actions=[ClassicalFilledButton(obj=[ft.Icon('ADD'),ft.Text("Добавить упражнение")],on_click=self.add_exercise)]
+        )   
+        self.controls = [
+            ft.ListView(expand=1,
+                controls=[
+                    ft.TextField(label="Название упражнения"),
+                    ft.Divider(),
+                    ClassicalTextButton([ft.Icon('ADD'),ft.Text("Добавить подход")],on_click=lambda _:self.page.open(self.dlg)),
+                ]
+            )
+        ]        
+    def add_round(self,*arg):
+        ...
+    def add_exercise(self,*arg):
+        self.page.close(self.dlg)
+        self.page.update()
