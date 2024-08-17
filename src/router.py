@@ -3,8 +3,12 @@ import flet as ft
 from repath import match
 
 from src.home.view import HomeView
-from src.workout.view import WorkoutReadView,WorkoutCreateView,ExerciseCreateView
 
+from src.workout.view.exercise_create import ExerciseCreateView
+
+from src.workout.view.workout_create import WorkoutCreateView
+from src.workout.view.workout_read import WorkoutReadView
+ 
 class RoutersDict:
     def __init__(self,routers:dict = {}):
         self.routers = routers

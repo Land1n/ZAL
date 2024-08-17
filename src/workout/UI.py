@@ -27,24 +27,23 @@ class WorkoutCard(ft.Card):
             padding=10,
         )
 
-class ExerciseCard(ft.Card):
-    class FirstRoundItem(ft.Row):
-        def __init__(self, text:str,first_round:Round,subtext=''):
-            super().__init__(
-                col={"xs":2,"sm":4},
-                controls=[
-                    ft.Text(text,color="grey"),
-                    ft.Card(
-                        content=ft.Container(
-                            content=ft.Text(f"{first_round.weight}{subtext}",color="blue200"),
-                            padding=10,
-                            bgcolor="grey900",
-                            border_radius=10,
-                            ),
-                    ),
-                ]
-            )
+class RoundItem(ft.Row):
+    def __init__(self, text:str,first_round:int,subtext=''):
+        super().__init__(
+            controls=[
+                ft.Text(text,color="grey",size=13),
+                ft.Card(
+                    content=ft.Container(
+                        content=ft.Text(f"{first_round}{subtext}",color="blue200",size=13),
+                        padding=10,
+                        bgcolor="grey900",
+                        border_radius=10,
+                        ),
+                ),
+            ]
+        )
 
+class ExerciseCard(ft.Card):
     def __init__(self,id:int,title:str,annotation:str,rounds:Round):
         super().__init__()
         first_round = Round(**rounds[0])
@@ -70,11 +69,11 @@ class ExerciseCard(ft.Card):
                             controls=[
                                 ft.Text("Первый поход",size=15),
                                 ft.ResponsiveRow(
-                                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    # alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                     controls=[
-                                        self.FirstRoundItem("Повторения:",first_round),
-                                        self.FirstRoundItem("Доп. вес:",first_round," кг."),
-                                        self.FirstRoundItem("Повторения:",first_round," мин."),
+                                        RoundItem("Повторения:",first_round.repetitions),
+                                        RoundItem("Вес:",first_round.weight," кг."),
+                                        RoundItem("Время отдыха:",first_round.time," мин."),
                                     ]    
                                 ),
                             ]
