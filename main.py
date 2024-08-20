@@ -16,6 +16,5 @@ def main(page:ft.Page):
     page.go("/home")
 
 
-
 if __name__ == '__main__':
     ft.app(main)

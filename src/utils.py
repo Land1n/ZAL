@@ -47,3 +47,6 @@ class ClassicalTextButton(ft.TextButton):
                 controls=self.obj 
             )
         )
+
+class ClassicalFrame(ft.ListView):
+    ...

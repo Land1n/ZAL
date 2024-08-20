@@ -3,7 +3,8 @@ import flet as ft
 from src.database import get_data_workouts
 
 from src.workout.schemes import Workout
-from src.workout.UI import WorkoutCard
+
+from src.workout.ui.workout_read_card import WorkoutReadCard
 
 class HomeView(ft.View):
     def __init__(self,page:ft.Page):
@@ -21,4 +22,4 @@ class HomeView(ft.View):
         self.controls = [self.lv]
         for workout in workouts:
             workout = Workout(**workout)
-            self.lv.controls.append(WorkoutCard(workout.id,workout.title,workout.subtitle,workout.avatar_color))
+            self.lv.controls.append(WorkoutReadCard(workout.id,workout.title,workout.subtitle,workout.avatar_color))

@@ -4,7 +4,9 @@ from repath import match
 
 from src.database import get_data_workouts
 from src.utils import BackButton
-from src.workout.UI import WorkoutCard, ExerciseCard
+from src.workout.UI import ExerciseCard
+
+from src.workout.schemes import Workout
 
 class WorkoutReadView(ft.View):
     def __init__(self,page:ft.Page):
@@ -16,7 +18,7 @@ class WorkoutReadView(ft.View):
             leading=BackButton(self.page),
             title=ft.Text('Тренировка'),
         )
-        self.workout = WorkoutCard(**(get_data_workouts(self.id)[0]))
+        self.workout = Workout(**(get_data_workouts(self.id)[0]))
         self.controls = [
             ft.Text(self.workout.title,size=40),
             ft.Text(self.workout.subtitle,color="grey"),
