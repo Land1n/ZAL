@@ -2,6 +2,8 @@ import flet as ft
 
 from functools import partial
 
+
+
 def view_pop(page:ft.Page,*view):
     page.views.pop()
     top_view = page.views[-1]
@@ -49,4 +51,25 @@ class ClassicalTextButton(ft.TextButton):
         )
 
 class ClassicalFrame(ft.ListView):
+    def __init__(self,obj:list):
+        super().__init__()
+        self.controls = [
+            ft.ListView(
+                expand=1,
+                spacing=5,
+                controls=[
+                    ft.Card(
+                        content=ft.Container(
+                            padding=10,
+                            content=ft.Column(
+                                controls=obj
+                            )
+                        )
+                    )
+                ]
+            )
+        ]
+
+
+class BaseView(ft.View):
     ...

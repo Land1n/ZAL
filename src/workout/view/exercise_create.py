@@ -2,7 +2,13 @@ import flet as ft
 
 from src.utils import BackButton,ClassicalTextButton,ClassicalFilledButton
 
-from workout.ui.round_create_alert_dialog import RoundCreateAlertDialog
+from src.workout.ui.round_create_alert_dialog import RoundCreateAlertDialog
+
+from src.utils import ClassicalFrame
+
+from src.workout.schemes import Round
+
+
 
 class ExerciseCreateView(ft.View):
     def __init__(self,page:ft.Page,exercise_data:dict = {}):
@@ -14,15 +20,14 @@ class ExerciseCreateView(ft.View):
             leading=BackButton(self.page),
             title=ft.Text('Добавить упражнение'),
         )    
-        self.round_list = []
-        self.dlg = RoundCreateAlertDialog(self.round_list)
-
+        self.rounds_list = []
+        self.dlg = RoundCreateAlertDialog(self.rounds_list)
         self.controls = [
-            ft.ListView(
-                expand=1,
-                spacing=5,
-                controls=[
-                    ft.TextField(label="Название упражнения"),
+            ClassicalFrame(
+                obj=[                    
+                    ft.TextField(
+                        label="Название упражнения"
+                    ),
                     ft.TextField(
                         label="Заметки",
                         hint_text="Не обязательно",
@@ -30,12 +35,33 @@ class ExerciseCreateView(ft.View):
                         min_lines=1,
                         max_lines=3,
                     ),
-                    ClassicalFilledButton([ft.Icon('ADD'),ft.Text("Добавить упражнение")],on_click=self.add_round),
+                    ClassicalFilledButton(
+                        on_click=self.add_exercise,
+                        obj=[
+                            ft.Icon("ADD"),
+                            ft.Text("Добавить упражнение")
+                        ],
+                    ),
                     ft.Divider(),
 
-                    ClassicalTextButton([ft.Icon('ADD'),ft.Text("Добавить подход")],on_click=lambda _:self.page.open(self.dlg)),
+                    ClassicalTextButton(
+                        on_click=lambda _:self.page.open(self.dlg),
+                        obj=[
+                            ft.Icon('ADD'),
+                            ft.Text("Добавить подход")
+                        ]
+                    ),
                 ]
-            )
-        ]        
-    def add_round(self,*arg):
-        print(self.exercise_list)
+            ),
+        ]     
+        for round in self.rounds_list:  
+            round = Round(**round) 
+            print('qwe')
+            self.controls.append(ft.Text(f"{round.weight},{round.repetitions},{round.time}",size=10)) 
+            self.update()
+
+
+
+    def add_exercise(self,*arg):
+        print(self.controls)
+        print(self.rounds_list)
