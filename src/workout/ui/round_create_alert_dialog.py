@@ -2,16 +2,23 @@ import flet as ft
 
 from src.utils import ClassicalFilledButton
 
+from src.workout.schemes import Round
+
 from src.database import get_last_id,update_last_id
 
 class RoundCreateAlertDialog(ft.AlertDialog):
 
     class RoundCreateAlertDialogTextField(ft.TextField):
+
+        class NumbersAndDotInputFilter(ft.InputFilter):
+            def __init__(self):
+                super().__init__(regex_string=r"[0-9,.]")
+
         def __init__(self,ref:ft.Ref,label:str,required:bool=True):
             super().__init__(ref = ref)
             self.label = label
-            self.input_filter = ft.NumbersOnlyInputFilter()
-            self.max_length = 4
+            self.input_filter = self.NumbersAndDotInputFilter()
+            self.max_length = 5
 
             if not required:
                 self.prefix_icon=ft.icons.COLOR_LENS
@@ -19,17 +26,21 @@ class RoundCreateAlertDialog(ft.AlertDialog):
             e.control.error_text = ''
             e.control.update()
 
-    def __init__(self,rounds_list=[]):
+    def __init__(self,round_data:Round = {}):
         title = "Добавить поход"
-
-        self.rounds_list = rounds_list
         
+        self.round_data = round_data
+
         self.text_field_repetitions = ft.Ref[ft.TextField]()
         self.text_field_weight = ft.Ref[ft.TextField]()
         self.text_field_time = ft.Ref[ft.TextField]()
 
+        if self.round_data: 
+            self.text_field_repetitions.current.value = self.round_data.repetitions
+            self.text_field_weight.current.value = self.round_data.weight
+            self.text_field_time.current.value = self.round_data.time
+
         super().__init__(
-            on_dismiss=self.on_dismiss_alert_dialog,
             title=ft.Text(title),
             actions=[
                 ClassicalFilledButton(
@@ -43,8 +54,8 @@ class RoundCreateAlertDialog(ft.AlertDialog):
             content=ft.Column(
                 tight=True,
                 controls=[
-                    self.RoundCreateAlertDialogTextField(ref=self.text_field_repetitions,label="Количество повторений"),
                     self.RoundCreateAlertDialogTextField(ref=self.text_field_weight,label="Вес"),
+                    self.RoundCreateAlertDialogTextField(ref=self.text_field_repetitions,label="Количество повторений"),
                     self.RoundCreateAlertDialogTextField(ref=self.text_field_time,label="Время отдыха",)
                 ]
             ),
@@ -57,19 +68,20 @@ class RoundCreateAlertDialog(ft.AlertDialog):
                 text_field.update()
                 return False 
             return True
+
+        rounds_list = e.control.page.views[-1].rounds_list
+
         if all([cheak_text_field(self.text_field_repetitions.current), cheak_text_field(self.text_field_weight.current), cheak_text_field(self.text_field_time.current)]):
-            self.rounds_list += [
-                    {
-                        "id": get_last_id(),
-                        "weight":self.text_field_weight.current.value,
-                        "repetitions":self.text_field_repetitions.current.value,
-                        "time":self.text_field_time.current.value
-                    }
-                ]
+            rounds_list += [
+                {
+                    "id": get_last_id(),
+                    "weight":self.text_field_weight.current.value,
+                    "repetitions":self.text_field_repetitions.current.value,
+                    "time":self.text_field_time.current.value
+                }
+            ]
+
             update_last_id()
             self.page.close(e.control.parent)
+            e.control.page.views[-1].add_round(round=rounds_list[-1])
             self.page.update()
-    def on_dismiss_alert_dialog(self,e:ft.ControlEvent):
-        e.control.page.views[-1].update()
-        print(e.control.page.views[-1].control)
-        

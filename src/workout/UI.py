@@ -2,6 +2,7 @@ import flet as ft
 
 from src.workout.schemes import Round 
 
+from src.workout.ui.round_read_data_table import RoundReadDataTable,RoundReadDataRow
 
 class RoundItem(ft.Row):
     def __init__(self, text:str,first_round:int,subtext=''):
@@ -62,15 +63,7 @@ class ExerciseCard(ft.Card):
                             leading=ft.Icon(ft.icons.WORK),
                             affinity=ft.TileAffinity.PLATFORM,
                             maintain_state=True,
-                            controls=[ft.DataTable(
-                                columns=[
-                                    ft.DataColumn(ft.Text("Вес"), numeric=True),
-                                    ft.DataColumn(ft.Text("Повторения"), numeric=True),
-                                    ft.DataColumn(ft.Text("Время отдыха"), numeric=True),
-                                ],
-                                rows=[RoundDataRow(**round) for round in rounds],
-                            ),
-                        ],
+                            controls=[RoundReadDataTable(rows=[RoundReadDataRow(**round) for round in rounds])],
                     )
                 ],
             ),
@@ -85,12 +78,3 @@ class ExerciseCard(ft.Card):
                             controls=[ft.ListTile(title=ft.Text(annotation))],
                         )]
 
-class RoundDataRow(ft.DataRow):
-    def __init__(self,id:int,weight:int,repetitions:int,time:int):
-        
-        self.cells = [
-            ft.DataCell(ft.Text(weight)),
-            ft.DataCell(ft.Text(repetitions)),
-            ft.DataCell(ft.Text(time)),
-        ]
-        super().__init__(cells=self.cells)

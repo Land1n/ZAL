@@ -2,6 +2,7 @@ import flet as ft
 
 from src.utils import BackButton,ClassicalTextButton,ClassicalFilledButton
 
+from src.workout.ui.round_read_data_table import RoundReadDataTable,RoundReadDataRow 
 from src.workout.ui.round_create_alert_dialog import RoundCreateAlertDialog
 
 from src.utils import ClassicalFrame
@@ -20,10 +21,17 @@ class ExerciseCreateView(ft.View):
             leading=BackButton(self.page),
             title=ft.Text('Добавить упражнение'),
         )    
+        self.rounds_table = RoundReadDataTable(rows=[])
+        
         self.rounds_list = []
-        self.dlg = RoundCreateAlertDialog(self.rounds_list)
+        
+        self.dlg = RoundCreateAlertDialog()
+        
+        self.frame = ft.Ref[ClassicalFrame]()
+        
         self.controls = [
             ClassicalFrame(
+                ref = self.frame,
                 obj=[                    
                     ft.TextField(
                         label="Название упражнения"
@@ -43,7 +51,6 @@ class ExerciseCreateView(ft.View):
                         ],
                     ),
                     ft.Divider(),
-
                     ClassicalTextButton(
                         on_click=lambda _:self.page.open(self.dlg),
                         obj=[
@@ -54,14 +61,14 @@ class ExerciseCreateView(ft.View):
                 ]
             ),
         ]     
-        for round in self.rounds_list:  
-            round = Round(**round) 
-            print('qwe')
-            self.controls.append(ft.Text(f"{round.weight},{round.repetitions},{round.time}",size=10)) 
-            self.update()
-
-
-
+        
+    def add_round(self,e:ft.ControlEvent = None,round:Round = {}):
+        if isinstance(round,dict):
+            round = Round(**round)
+        self.frame.current.obj.insert(-1,  self.rounds_table)
+        self.frame.current.update()
+        self.rounds_table.rows.append(RoundReadDataRow(round.id,round.weight,round.repetitions,round.time)) 
+        self.rounds_table.update()
     def add_exercise(self,*arg):
         print(self.controls)
         print(self.rounds_list)

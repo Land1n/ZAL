@@ -51,8 +51,9 @@ class ClassicalTextButton(ft.TextButton):
         )
 
 class ClassicalFrame(ft.ListView):
-    def __init__(self,obj:list):
-        super().__init__()
+    def __init__(self,obj:list,ref:ft.Ref=None):
+        super().__init__(ref=ref)
+        self.obj = obj
         self.controls = [
             ft.ListView(
                 expand=1,
@@ -60,9 +61,10 @@ class ClassicalFrame(ft.ListView):
                 controls=[
                     ft.Card(
                         content=ft.Container(
-                            padding=10,
+                            padding=10,                            
                             content=ft.Column(
-                                controls=obj
+                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                controls=self.obj
                             )
                         )
                     )
@@ -70,6 +72,4 @@ class ClassicalFrame(ft.ListView):
             )
         ]
 
-
-class BaseView(ft.View):
-    ...
+    
