@@ -83,5 +83,6 @@ class RoundCreateAlertDialog(ft.AlertDialog):
 
             update_last_id()
             self.page.close(e.control.parent)
+            e.control.page.views[-1].change_round_btn(0)
             e.control.page.views[-1].add_round(round=rounds_list[-1])
             self.page.update()

@@ -13,7 +13,7 @@ def main(page:ft.Page):
     page.on_route_change = router.route_change
     page.on_view_pop = view_pop
     page.views.clear()
-    page.go("/home")
+    page.go("/home") 
 
 
 if __name__ == '__main__':

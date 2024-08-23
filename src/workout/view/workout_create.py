@@ -2,7 +2,11 @@ import flet as ft
 
 import flet_core as ftc
 
-from src.utils import BackButton,ClassicalFilledButton,ClassicalFrame
+from src.utils import BackButton,ClassicalFilledButton,ClassicalTextButton,ClassicalFrame
+
+from src.workout.ui.exercise_read_data_table import ExerciseReadDataTable,ExerciseReadDataRow
+
+from src.workout.schemes import Exercises
 
 class WorkoutCreateView(ft.View):
     def __init__(self,page:ft.Page,workout_data:dict = {}):
@@ -15,6 +19,12 @@ class WorkoutCreateView(ft.View):
             title=ft.Text('Создание тренировки'),
         )   
 
+
+        self.exercise_list = []
+        self.exercise_data_table = ExerciseReadDataTable(rows=[],visible=False)
+
+        self.exercise_add_btn = ft.Ref[ClassicalTextButton]()
+
         self.controls = [
             ClassicalFrame(
                 title='Тренировка',
@@ -22,27 +32,35 @@ class WorkoutCreateView(ft.View):
                 obj=[
                     ft.TextField(label="Название тренировки"),
                     ft.TextField(label="Важные моменты тренировки тренировки"),
+                    ClassicalFilledButton(obj="Создать тренировку",on_click=self.add_workout),
                     ft.Divider(),
-                    ft.ExpansionTile(
-                        title=ft.Row(
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            controls=[
-                                ft.Text("Список упражнений:",size=20),
-                                ft.IconButton(icon="ADD",on_click=lambda _:self.page.go("/workout/create/exercise")),
-                            ]
-                        ), 
-                        affinity=ft.TileAffinity.LEADING,
-                        maintain_state=True,
-                        controls=[
-                            ft.DataTable(
-                                columns=[
-                                    ft.DataColumn(ft.Text("Название")),
-                                    ft.DataColumn(ft.Text("Походы"),numeric=True),
-                                ],
-                            ),                                            
-                        ],
-                    ),
-                    ClassicalFilledButton("Создать тренировку")
+                    self.exercise_data_table,
+                    ClassicalTextButton(
+                        ref=self.exercise_add_btn,
+                        visible=False,
+                        on_click=lambda _:self.page.go("/workout/create/exercise"),
+                        obj=[
+                            ft.Icon('ADD'),
+                            ft.Text("Добавить упражнение")
+                        ]   
+                    )                                        
                 ]
             )
         ]
+        if not self.exercise_list:
+            self.exercise_add_btn.current.visible = True
+        elif self.exercise_list:
+            for exercise in self.exercise_list:
+                self.add_exercise(exercise=exercise,need_update=False)
+
+    def add_exercise(self,e:ft.ControlEvent=None,exercise:Exercises={},need_update=True):
+        if isinstance(exercise,dict):
+            exercise = Exercises(**exercise)
+        self.exercise_data_table.visible = True
+        self.exercise_add_btn.current.visible = False
+        self.exercise_data_table.rows.append(ExerciseReadDataRow(exercise.id,exercise.title,exercise.annotation,exercise.rounds)) 
+        if need_update:
+            self.exercise_data_table.update()
+
+    def add_workout(self,e:ft.ControlEvent=None):
+        ...

@@ -19,13 +19,15 @@ class BackButton(ft.IconButton):
 
 
 class ClassicalFilledButton(ft.CupertinoFilledButton):
-    def __init__(self,obj=None,on_click=None) -> None:
+    def __init__(self,visible=True,obj=None,on_click=None,ref:ft.Ref=None) -> None:
         self.obj = []
         if isinstance(obj,str):
             self.obj += [ft.Text(obj)]
         elif isinstance(obj,list):
             self.obj = obj
         super().__init__(
+            ref=ref,
+            visible=visible,
             on_click=on_click,
             opacity_on_click=0.3,
             content=ft.Row(
@@ -36,13 +38,15 @@ class ClassicalFilledButton(ft.CupertinoFilledButton):
 
 
 class ClassicalTextButton(ft.TextButton):
-    def __init__(self,obj=None,on_click=None) -> None:
+    def __init__(self,visible=True,obj=None,on_click=None,ref:ft.Ref=None) -> None:
         self.obj = []
         if isinstance(obj,str):
             self.obj += [ft.Text(obj)]
         elif isinstance(obj,list):
             self.obj = obj
         super().__init__(
+            ref=ref,
+            visible=visible,
             on_click=on_click,
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.CENTER,

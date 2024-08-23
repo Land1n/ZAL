@@ -11,7 +11,7 @@ from src.utils import ClassicalFrame,view_pop
 
 from src.workout.schemes import Round
 
-
+from src.database import get_last_id,update_last_id
 
 class ExerciseCreateView(ft.View):
     def __init__(self,page:ft.Page,exercise_data:dict = {}):
@@ -26,24 +26,14 @@ class ExerciseCreateView(ft.View):
         
         self.frame = ft.Ref[ClassicalFrame]()
         
+        self.round_btn = ft.Ref[ClassicalTextButton]()
+
         self.title_text_field = ft.Ref[ft.TextField]()
         self.annotation_text_field = ft.Ref[ft.TextField]()
         self.rounds_list = []
         
         self.rounds_table = RoundReadDataTable(rows=[],visible=False)
         self.dlg = RoundCreateAlertDialog()
-        
-        self.banner = ft.Banner(
-            bgcolor="red100",
-            leading=ft.Icon(ft.icons.WARNING_AMBER_ROUNDED, color='red', size=40),            content=ft.Text(
-                value="Чтобы добавить упражение нужно добавить хотя бы один поход.",
-                color="red",
-            ),
-            actions=[
-                ft.TextButton(text="Закрыть",style=ft.ButtonStyle(color="red"),on_click=self.close_banner),
-            ],
-        )
-
 
         self.controls = [
             ClassicalFrame(
@@ -75,6 +65,7 @@ class ExerciseCreateView(ft.View):
                     ft.Divider(),
                     self.rounds_table,
                     ClassicalTextButton(
+                        ref=self.round_btn,
                         on_click=lambda _:self.page.open(self.dlg),
                         obj=[
                             ft.Icon('ADD'),
@@ -89,12 +80,19 @@ class ExerciseCreateView(ft.View):
             for round in self.rounds_list:
                 self.add_round(round=round,need_update=False)
 
+    def change_round_btn(self,type:int,e:ft.ControlEvent=None):
+        for control in self.round_btn.current.content.controls:
+            if type == 0:
+                control.color = ""
+            elif type == -1:
+                control.color = "red100"
+            control.update()
+        self.round_btn.current.update()
+
     def on_change_title_text_field(self,e):
         self.title_text_field.current.error_text = ""
         self.title_text_field.current.update()
-
-    def close_banner(self,e:ft.ControlEvent = None):
-        self.page.close(self.banner)
+        self.change_round_btn(0)
 
     def add_round(self,e:ft.ControlEvent = None,round:Round = {},need_update:bool=True):
         if isinstance(round,dict):
@@ -110,9 +108,17 @@ class ExerciseCreateView(ft.View):
             self.title_text_field.current.update()
  
         if not self.rounds_list:
-            self.page.open(self.banner)
+            self.change_round_btn(-1)
 
         if all([self.title_text_field.current.value, self.rounds_list]):
-            self.close_banner()
+            exercise_list = self.page.views[-2].exercise_list
+            exercise_list += [{
+                "id":get_last_id(),
+                "title": self.title_text_field.current.value,
+                "annotation":self.annotation_text_field.current.value,
+                "rounds":self.rounds_list
+            }]
+            update_last_id()
+            self.page.views[-2].add_exercise(exercise=exercise_list[-1],need_update=False)
             view_pop(self.page)
-            
+
