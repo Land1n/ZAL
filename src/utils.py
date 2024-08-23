@@ -1,8 +1,8 @@
 import flet as ft
 
+import flet_core
+
 from functools import partial
-
-
 
 def view_pop(page:ft.Page,*view):
     page.views.pop()
@@ -51,9 +51,16 @@ class ClassicalTextButton(ft.TextButton):
         )
 
 class ClassicalFrame(ft.ListView):
-    def __init__(self,obj:list,ref:ft.Ref=None):
+    def __init__(self,obj:list,title:str="",icon:str=flet_core.icons.CIRCLE_OUTLINED,ref:ft.Ref=None):
         super().__init__(ref=ref)
         self.obj = obj
+        self.title = title
+        self.icon = icon
+
+        visible=False
+        if self.title:
+            visible=True
+
         self.controls = [
             ft.ListView(
                 expand=1,
@@ -64,7 +71,13 @@ class ClassicalFrame(ft.ListView):
                             padding=10,                            
                             content=ft.Column(
                                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                                controls=self.obj
+                                controls=[
+                                    ft.Row(
+                                        visible=visible,
+                                        controls=[ft.Icon(self.icon),ft.Text(self.title,size=25)]
+                                    ),
+                                    *self.obj
+                                ]
                             )
                         )
                     )

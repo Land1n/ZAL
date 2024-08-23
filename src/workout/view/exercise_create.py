@@ -1,11 +1,13 @@
 import flet as ft
 
+import flet_core as ftc
+
 from src.utils import BackButton,ClassicalTextButton,ClassicalFilledButton
 
 from src.workout.ui.round_read_data_table import RoundReadDataTable,RoundReadDataRow 
 from src.workout.ui.round_create_alert_dialog import RoundCreateAlertDialog
 
-from src.utils import ClassicalFrame
+from src.utils import ClassicalFrame,view_pop
 
 from src.workout.schemes import Round
 
@@ -31,15 +33,29 @@ class ExerciseCreateView(ft.View):
         self.rounds_table = RoundReadDataTable(rows=[],visible=False)
         self.dlg = RoundCreateAlertDialog()
         
+        self.banner = ft.Banner(
+            bgcolor="red100",
+            leading=ft.Icon(ft.icons.WARNING_AMBER_ROUNDED, color='red', size=40),            content=ft.Text(
+                value="Чтобы добавить упражение нужно добавить хотя бы один поход.",
+                color="red",
+            ),
+            actions=[
+                ft.TextButton(text="Закрыть",style=ft.ButtonStyle(color="red"),on_click=self.close_banner),
+            ],
+        )
+
+
         self.controls = [
             ClassicalFrame(
                 ref = self.frame,
+                icon = ftc.icons.FITNESS_CENTER,
+                title="Упражнение",
                 obj=[                   
-                    ft.Text("Упражнение",size=25,text_align=ft.TextAlign.START), 
                     ft.TextField(
                         ref=self.title_text_field,
                         label="Название упражнения",
                         max_lines=1,
+                        on_change=self.on_change_title_text_field,
                     ),
                     ft.TextField(
                         ref=self.annotation_text_field,
@@ -73,6 +89,13 @@ class ExerciseCreateView(ft.View):
             for round in self.rounds_list:
                 self.add_round(round=round,need_update=False)
 
+    def on_change_title_text_field(self,e):
+        self.title_text_field.current.error_text = ""
+        self.title_text_field.current.update()
+
+    def close_banner(self,e:ft.ControlEvent = None):
+        self.page.close(self.banner)
+
     def add_round(self,e:ft.ControlEvent = None,round:Round = {},need_update:bool=True):
         if isinstance(round,dict):
             round = Round(**round)
@@ -82,4 +105,14 @@ class ExerciseCreateView(ft.View):
             self.rounds_table.update()
 
     def add_exercise(self,*arg):
-        ...
+        if not self.title_text_field.current.value:
+            self.title_text_field.current.error_text = "Обязательное поле для заполнения"
+            self.title_text_field.current.update()
+ 
+        if not self.rounds_list:
+            self.page.open(self.banner)
+
+        if all([self.title_text_field.current.value, self.rounds_list]):
+            self.close_banner()
+            view_pop(self.page)
+            

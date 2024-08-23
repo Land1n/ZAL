@@ -60,7 +60,7 @@ class ExerciseCard(ft.Card):
                     ft.ExpansionTile(
                             title=ft.Text("Полная тренировка"),
                             subtitle=ft.Text("Информация представлена в таблице",color="grey"),
-                            leading=ft.Icon(ft.icons.WORK),
+                            leading=ft.Icon(ft.icons.FITNESS_CENTER),
                             affinity=ft.TileAffinity.PLATFORM,
                             maintain_state=True,
                             controls=[RoundReadDataTable(rows=[RoundReadDataRow(**round) for round in rounds])],
