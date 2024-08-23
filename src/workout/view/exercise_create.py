@@ -21,22 +21,28 @@ class ExerciseCreateView(ft.View):
             leading=BackButton(self.page),
             title=ft.Text('Добавить упражнение'),
         )    
-        self.rounds_table = RoundReadDataTable(rows=[])
-        
-        self.rounds_list = []
-        
-        self.dlg = RoundCreateAlertDialog()
         
         self.frame = ft.Ref[ClassicalFrame]()
+        
+        self.title_text_field = ft.Ref[ft.TextField]()
+        self.annotation_text_field = ft.Ref[ft.TextField]()
+        self.rounds_list = []
+        
+        self.rounds_table = RoundReadDataTable(rows=[],visible=False)
+        self.dlg = RoundCreateAlertDialog()
         
         self.controls = [
             ClassicalFrame(
                 ref = self.frame,
-                obj=[                    
+                obj=[                   
+                    ft.Text("Упражнение",size=25,text_align=ft.TextAlign.START), 
                     ft.TextField(
-                        label="Название упражнения"
+                        ref=self.title_text_field,
+                        label="Название упражнения",
+                        max_lines=1,
                     ),
                     ft.TextField(
+                        ref=self.annotation_text_field,
                         label="Заметки",
                         hint_text="Не обязательно",
                         multiline=True,
@@ -51,24 +57,29 @@ class ExerciseCreateView(ft.View):
                         ],
                     ),
                     ft.Divider(),
+                    self.rounds_table,
                     ClassicalTextButton(
                         on_click=lambda _:self.page.open(self.dlg),
                         obj=[
                             ft.Icon('ADD'),
                             ft.Text("Добавить подход")
                         ]
-                    ),
+                    )
                 ]
-            ),
+            )
         ]     
         
-    def add_round(self,e:ft.ControlEvent = None,round:Round = {}):
+        if self.rounds_list:
+            for round in self.rounds_list:
+                self.add_round(round=round,need_update=False)
+
+    def add_round(self,e:ft.ControlEvent = None,round:Round = {},need_update:bool=True):
         if isinstance(round,dict):
             round = Round(**round)
-        self.frame.current.obj.insert(-1,  self.rounds_table)
-        self.frame.current.update()
+        self.rounds_table.visible = True
         self.rounds_table.rows.append(RoundReadDataRow(round.id,round.weight,round.repetitions,round.time)) 
-        self.rounds_table.update()
+        if need_update:
+            self.rounds_table.update()
+
     def add_exercise(self,*arg):
-        print(self.controls)
-        print(self.rounds_list)
+        ...
