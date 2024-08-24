@@ -1,31 +1,33 @@
-import json
+import flet as ft
 
-from src.workout.schemes import Workout
+class DataBase:
+    def __init__(self,e:ft.ControlEvent=None,page:ft.Page=None) -> None:
+        
+        self.__client_storage = None
 
-def get_all_data() -> None:
-    with open('assets/database.json', encoding='utf-8') as f:
-        return json.load(f)
+        if isinstance(e,ft.ControlEvent):
+            self.__client_storage = e.control.page.client_storage
+        elif isinstance(page,ft.Page):
+            self.__client_storage = page.client_storage
+        else:
+            assert "Not found Client Storage"
 
-def get_last_id() -> int:
-    with open('assets/database.json', encoding='utf-8') as f:
-        data = json.load(f)
-    return data["last_id"]
+        if not self.__client_storage.contains_key("last_id"):
+            self.__client_storage.set("last_id",0)
+        if not self.__client_storage.contains_key("workouts"):
+            self.__client_storage.set("workouts",[])
 
-def update_last_id() -> None:
-    data = get_all_data()
-    data['last_id'] += 1
-    with open("assets/database.json", "w",  encoding='utf-8') as file:
-        json.dump(data, file)
+    def get_last_id(self) -> int:
+        last_id = self.__client_storage.get('last_id')
+        self.__client_storage.set("last_id",last_id+1)
+        return last_id
 
-def get_data_workouts(id:int = None) -> list:
-    with open('assets/database.json', encoding='utf-8') as f:
-        data = json.load(f)
+    def get_data_workouts(self,id:int = None) -> list:
         if isinstance(id,int):
-            return [workout for workout in data["workouts"] if workout.get("id",-1) == id]
-        return data["workouts"]
+            return [workout for workout in self.__client_storage.get('workouts') if workout.get("id",-1) == id]
+        return self.__client_storage.get('workouts')
 
-def add_data_workouts(workout:Workout={}) -> None:
-    data = get_all_data()
-    data["workouts"] += [workout]
-    with open("assets/database.json", "w",  encoding='utf-8') as file:
-        json.dump(data, file)
+    def set_data_workouts(self,workout={}) -> None:
+        workouts = self.__client_storage.get('workouts')
+        workouts += [workout]
+        self.__client_storage.set("workouts",workouts)

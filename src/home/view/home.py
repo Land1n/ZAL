@@ -1,6 +1,6 @@
 import flet as ft
 
-from src.database import get_data_workouts
+from src.database import DataBase
 
 from src.workout.schemes import Workout
 
@@ -17,8 +17,22 @@ class HomeView(ft.View):
             center_title = True,
             actions = [ft.IconButton(icon=ft.icons.ADD, on_click=lambda _:self.page.go(f"/workout/create"),)]
         )    
-        workouts = get_data_workouts()
-        self.lv = ft.ListView(expand=1)
+        database = DataBase(page=self.page)
+
+        workouts = database.get_data_workouts()
+        
+        self.lv = ft.ListView(
+            expand=1,
+            # controls=[
+            #     ft.Column(
+            #         alignment=ft.MainAxisAlignment.CENTER,
+            #         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            #         controls=[
+            #             ft.Text("")
+            #         ]
+            #     )
+            # ]
+        )
         self.controls = [self.lv]
         for workout in workouts:
             self.add_workout(workout,need_update=False)

@@ -2,7 +2,7 @@ import flet as ft
 
 from repath import match
 
-from src.database import get_data_workouts
+from src.database import DataBase
 from src.utils import BackButton
 from src.workout.UI import ExerciseCard
 
@@ -18,7 +18,8 @@ class WorkoutReadView(ft.View):
             leading=BackButton(self.page),
             title=ft.Text('Тренировка'),
         )
-        self.workout = Workout(**(get_data_workouts(self.id)[0]))
+        database = DataBase(page=self.page)
+        self.workout = Workout(**(database.get_data_workouts(self.id)[0]))
         self.controls = [
             ft.Text(self.workout.title,size=40),
             ft.Text(self.workout.subtitle,color="grey"),

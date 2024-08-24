@@ -11,7 +11,7 @@ from src.utils import ClassicalFrame,view_pop
 
 from src.workout.schemes import Round
 
-from src.database import get_last_id,update_last_id
+from src.database import DataBase
 
 from src.utils import ClassicalBanner,TypeClassicalBanner,TypeClassicalButton,on_change_text_field,partial
 
@@ -100,14 +100,15 @@ class ExerciseCreateView(ft.View):
             self.page.open(ClassicalBanner("Нужно добавить хотя бы один поход",type=TypeClassicalBanner.ERROR))
 
         if all([self.title_text_field.current.value, self.rounds_list]):
+            database = DataBase(page=self.page)
+
             exercise_list = self.page.views[-2].exercise_list
             exercise_list += [{
-                "id":get_last_id(),
+                "id":database.get_last_id(),
                 "title": self.title_text_field.current.value,
                 "annotation":self.annotation_text_field.current.value,
                 "rounds":self.rounds_list
             }]
-            update_last_id()
             self.page.views[-2].add_exercise(exercise=exercise_list[-1],need_update=False)
             view_pop(self.page)
 

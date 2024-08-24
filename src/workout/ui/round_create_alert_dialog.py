@@ -4,7 +4,7 @@ from src.utils import ClassicalFilledButton
 
 from src.workout.schemes import Round, TypeClassicalButton
 
-from src.database import get_last_id,update_last_id
+from src.database import DataBase
 
 class RoundCreateAlertDialog(ft.AlertDialog):
 
@@ -70,18 +70,17 @@ class RoundCreateAlertDialog(ft.AlertDialog):
             return True
 
         rounds_list = e.control.page.views[-1].rounds_list
-
+        database = DataBase(e=e)
         if all([cheak_text_field(self.text_field_repetitions.current), cheak_text_field(self.text_field_weight.current), cheak_text_field(self.text_field_time.current)]):
             rounds_list += [
                 {
-                    "id": get_last_id(),
+                    "id": database.get_last_id(),
                     "weight":self.text_field_weight.current.value,
                     "repetitions":self.text_field_repetitions.current.value,
                     "time":self.text_field_time.current.value
                 }
             ]
 
-            update_last_id()
             self.page.close(e.control.parent)
             e.control.page.views[-1].round_btn.current.change_btn_style(TypeClassicalButton.NORMAL)
             e.control.page.views[-1].add_round(round=rounds_list[-1])

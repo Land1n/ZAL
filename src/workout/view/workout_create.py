@@ -10,7 +10,7 @@ from src.workout.schemes import Exercises, TypeClassicalBanner,TypeClassicalButt
 
 from src.utils import ClassicalBanner,on_change_text_field,view_pop
 
-from src.database import get_last_id,update_last_id,add_data_workouts
+from src.database import DataBase
 
 class WorkoutCreateView(ft.View):
     def __init__(self,page:ft.Page,workout_data:dict = {}):
@@ -86,16 +86,16 @@ class WorkoutCreateView(ft.View):
             self.page.open(ClassicalBanner("Нужно добавить хотя бы одно упражнение",type=TypeClassicalBanner.ERROR))
 
         if all([self.title_text_field.current.value, self.exercise_list]):
+            database = DataBase(page=self.page)
             workout = {
-                "id":get_last_id(),
+                "id":database.get_last_id(),
                 "title": self.title_text_field.current.value,
                 "annotation":self.annotation_text_field.current.value,
                 "subtitle":"",
                 "avatar_color": "red700",
                 "exercises":self.exercise_list
             }
-            add_data_workouts(workout)
-            update_last_id()
+            database.set_data_workouts(workout)
             self.page.open(ClassicalBanner(f"Тренировка ( {self.title_text_field.current.value} ) успешно добавлена",type=TypeClassicalBanner.SUCCESSFUL))
             self.page.views[-2].add_workout(workout=workout,need_update=False)
             view_pop(self.page)
