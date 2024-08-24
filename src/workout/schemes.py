@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 from typing import Optional
 
+from enum import Enum
+
 @dataclass
 class Round:
     id:int
@@ -24,3 +26,13 @@ class Workout:
     annotation:Optional[str] 
     avatar_color:str
     exercises:list[Exercises] 
+
+class TypeClassicalButton(Enum):
+    NORMAL = 0
+    ERROR = 1
+
+class TypeClassicalBanner(Enum):
+    INFO = 0
+    SUCCESSFUL = 1
+    WARNING = 2
+    ERROR = 3

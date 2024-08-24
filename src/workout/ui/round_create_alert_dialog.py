@@ -2,7 +2,7 @@ import flet as ft
 
 from src.utils import ClassicalFilledButton
 
-from src.workout.schemes import Round
+from src.workout.schemes import Round, TypeClassicalButton
 
 from src.database import get_last_id,update_last_id
 
@@ -83,6 +83,6 @@ class RoundCreateAlertDialog(ft.AlertDialog):
 
             update_last_id()
             self.page.close(e.control.parent)
-            e.control.page.views[-1].change_round_btn(0)
+            e.control.page.views[-1].round_btn.current.change_btn_style(TypeClassicalButton.NORMAL)
             e.control.page.views[-1].add_round(round=rounds_list[-1])
             self.page.update()

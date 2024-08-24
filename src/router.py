@@ -2,7 +2,7 @@ import flet as ft
 
 from repath import match
 
-from src.home.view import HomeView
+from src.home.view.home import HomeView
 
 from src.workout.view.exercise_create import ExerciseCreateView
 

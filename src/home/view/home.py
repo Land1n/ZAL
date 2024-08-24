@@ -21,5 +21,11 @@ class HomeView(ft.View):
         self.lv = ft.ListView(expand=1)
         self.controls = [self.lv]
         for workout in workouts:
-            workout = Workout(**workout)
-            self.lv.controls.append(WorkoutReadCard(workout.id,workout.title,workout.subtitle,workout.avatar_color))
+            self.add_workout(workout,need_update=False)
+
+    def add_workout(self,workout:Workout = {},need_update=True):
+        if isinstance(workout,dict):
+            workout = Workout(**workout) 
+        self.lv.controls.append(WorkoutReadCard(workout.id,workout.title,workout.subtitle,workout.avatar_color))
+        if need_update:
+            self.lv.update()

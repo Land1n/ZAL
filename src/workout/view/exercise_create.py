@@ -13,6 +13,8 @@ from src.workout.schemes import Round
 
 from src.database import get_last_id,update_last_id
 
+from src.utils import ClassicalBanner,TypeClassicalBanner,TypeClassicalButton,on_change_text_field,partial
+
 class ExerciseCreateView(ft.View):
     def __init__(self,page:ft.Page,exercise_data:dict = {}):
         super().__init__()
@@ -44,8 +46,9 @@ class ExerciseCreateView(ft.View):
                     ft.TextField(
                         ref=self.title_text_field,
                         label="Название упражнения",
+                        hint_text="Обязательно",
                         max_lines=1,
-                        on_change=self.on_change_title_text_field,
+                        on_change=lambda e:on_change_text_field(e,self.round_btn.current.change_btn_style,TypeClassicalButton.NORMAL)
                     ),
                     ft.TextField(
                         ref=self.annotation_text_field,
@@ -75,24 +78,9 @@ class ExerciseCreateView(ft.View):
                 ]
             )
         ]     
-        
         if self.rounds_list:
             for round in self.rounds_list:
                 self.add_round(round=round,need_update=False)
-
-    def change_round_btn(self,type:int,e:ft.ControlEvent=None):
-        for control in self.round_btn.current.content.controls:
-            if type == 0:
-                control.color = ""
-            elif type == -1:
-                control.color = "red100"
-            control.update()
-        self.round_btn.current.update()
-
-    def on_change_title_text_field(self,e):
-        self.title_text_field.current.error_text = ""
-        self.title_text_field.current.update()
-        self.change_round_btn(0)
 
     def add_round(self,e:ft.ControlEvent = None,round:Round = {},need_update:bool=True):
         if isinstance(round,dict):
@@ -108,7 +96,8 @@ class ExerciseCreateView(ft.View):
             self.title_text_field.current.update()
  
         if not self.rounds_list:
-            self.change_round_btn(-1)
+            self.round_btn.current.change_btn_style(TypeClassicalButton.ERROR)
+            self.page.open(ClassicalBanner("Нужно добавить хотя бы один поход",type=TypeClassicalBanner.ERROR))
 
         if all([self.title_text_field.current.value, self.rounds_list]):
             exercise_list = self.page.views[-2].exercise_list

@@ -16,9 +16,10 @@ def main(page: ft.Page):
             for icon in flet_core.icons.icons_list:
                 if any([re.search(f'{field.value}',icon) ,(not field.value)]):
                     lv.controls.append(item_list(icon))
-        except AssertionError:
-            pass
-        lv.update()
+            lv.update()
+        except:
+            lv.controls.clear()
+            lv.update()
     lv = ft.ListView(expand=True, spacing=10)
     field=ft.TextField(hint_text='Название иконки',on_change=on_change)
     for icon in flet_core.icons.icons_list:

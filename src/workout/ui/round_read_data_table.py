@@ -8,9 +8,9 @@ class RoundReadDataRow(ft.DataRow):
         self.time_row = ft.Ref[ft.DataCell]()
 
         self.cells = [
-            ft.DataCell(ref=self.weight_row,content=ft.Text(weight)),
+            ft.DataCell(ref=self.weight_row,content=ft.Text(weight+ " кг.")),
             ft.DataCell(ref=self.repetitions_row,content=ft.Text(repetitions)),
-            ft.DataCell(ref=self.time_row,content=ft.Text(time)),
+            ft.DataCell(ref=self.time_row,content=ft.Text(time+" мин.")),
         ]
         super().__init__(
             cells=self.cells,
