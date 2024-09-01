@@ -4,25 +4,29 @@ from src.workout.schemes import Round
 
 from src.workout.ui.round_read_data_table import RoundReadDataTable,RoundReadDataRow
 
-class RoundItem(ft.Row):
-    def __init__(self, text:str,first_round:int,subtext=''):
-        super().__init__(
-            controls=[
-                ft.Text(text,color="grey",size=13),
-                ft.Card(
-                    content=ft.Container(
-                        content=ft.Text(f"{first_round}{subtext}",color="blue200",size=13),
-                        padding=10,
-                        bgcolor="grey900",
-                        border_radius=10,
-                        ),
-                ),
-            ]
-        )
+from src.database import DataBase
 
-class ExerciseCard(ft.Card):
+class ExerciseReadCard(ft.Card):
+    class RoundItem(ft.Row):
+        def __init__(self, text:str,first_round:int,subtext=''):
+            super().__init__(
+                controls=[
+                    ft.Text(text,color="grey",size=13),
+                    ft.Card(
+                        content=ft.Container(
+                            content=ft.Text(f"{first_round}{subtext}",color="blue200",size=13),
+                            padding=10,
+                            bgcolor="grey900",
+                            border_radius=10,
+                            ),
+                    ),
+                ]
+            )
     def __init__(self,id:int,title:str,annotation:str,rounds:Round):
         super().__init__()
+
+        self.id = id
+
         first_round = Round(**rounds[0])
         self.content=ft.Container(
             padding=10,
@@ -34,7 +38,7 @@ class ExerciseCard(ft.Card):
                         trailing=ft.PopupMenuButton(
                             icon=ft.icons.MORE_VERT,
                             items=[
-                                ft.PopupMenuItem(text="Изменить"),
+                                ft.PopupMenuItem(text="Изменить",on_click=self.update_exercise),
                                 ft.PopupMenuItem(text="Удалить"),
                             ],
                         ),
@@ -48,9 +52,9 @@ class ExerciseCard(ft.Card):
                                 ft.ResponsiveRow(
                                     # alignment=ft.MainAxisAlignment.SPACE_AROUND,
                                     controls=[
-                                        RoundItem("Повторения:",first_round.repetitions),
-                                        RoundItem("Вес:",first_round.weight," кг."),
-                                        RoundItem("Время отдыха:",first_round.time," мин."),
+                                        self.RoundItem("Повторения:",first_round.repetitions),
+                                        self.RoundItem("Вес:",first_round.weight," кг."),
+                                        self.RoundItem("Время отдыха:",first_round.time," мин."),
                                     ]    
                                 ),
                             ]
@@ -77,4 +81,6 @@ class ExerciseCard(ft.Card):
                             maintain_state=True,
                             controls=[ft.ListTile(title=ft.Text(annotation))],
                         )]
-
+    def update_exercise(self,e:ft.ControlEvent):
+        from pprint import pprint
+        pprint(DataBase(e=e).get_obj(self.id))

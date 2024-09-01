@@ -1,7 +1,11 @@
 import flet as ft
 
+from src.database import DataBase
+
 class RoundReadDataRow(ft.DataRow):
     def __init__(self,id:int,weight:int,repetitions:int,time:int):
+
+        self.id = id
 
         self.weight_row = ft.Ref[ft.DataCell]()
         self.repetitions_row = ft.Ref[ft.DataCell]()
@@ -14,12 +18,11 @@ class RoundReadDataRow(ft.DataRow):
         ]
         super().__init__(
             cells=self.cells,
-            on_long_press=lambda _: print(
-                self.weight_row.current.content.value,
-                self.repetitions_row.current.content.value,
-                self.time_row.current.content.value,              
-            )
+            on_long_press=self.update_cell
         )
+
+    def update_cell(self,e:ft.ControlEvent):
+        print(DataBase(e=e).get_obj(self.id))
 
 class RoundReadDataTable(ft.DataTable):
     def __init__(self,rows:list[RoundReadDataRow] = [],visible:bool=True):

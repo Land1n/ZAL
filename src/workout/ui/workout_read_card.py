@@ -1,5 +1,7 @@
 import flet as ft
 
+from src.database import DataBase
+
 class WorkoutReadCard(ft.Card):
     def __init__(self,id:int,title:str,subtitle:str,avatar_color:str):
         super().__init__()
@@ -14,7 +16,7 @@ class WorkoutReadCard(ft.Card):
                         trailing=ft.PopupMenuButton(
                             icon=ft.icons.MORE_VERT,
                             items=[
-                                ft.PopupMenuItem(text="Изменить"),
+                                ft.PopupMenuItem(text="Изменить",on_click=self.update_workout),
                                 ft.PopupMenuItem(text="Удалить"),
                             ],
                         ),
@@ -24,3 +26,6 @@ class WorkoutReadCard(ft.Card):
             ),
             padding=10,
         )
+    def update_workout(self,e):
+        from pprint import pprint
+        pprint(DataBase(e=e).get_obj(self.id))

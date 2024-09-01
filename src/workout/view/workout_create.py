@@ -88,7 +88,7 @@ class WorkoutCreateView(ft.View):
         if all([self.title_text_field.current.value, self.exercise_list]):
             database = DataBase(page=self.page)
             workout = {
-                "id":database.get_last_id(),
+                "id":int(database.get_last_id()),
                 "title": self.title_text_field.current.value,
                 "annotation":self.annotation_text_field.current.value,
                 "subtitle":"",

@@ -27,7 +27,7 @@ class RoundCreateAlertDialog(ft.AlertDialog):
             e.control.update()
 
     def __init__(self,round_data:Round = {}):
-        title = "Добавить поход"
+        title = "Добавить подход"
         
         self.round_data = round_data
 
@@ -74,7 +74,7 @@ class RoundCreateAlertDialog(ft.AlertDialog):
         if all([cheak_text_field(self.text_field_repetitions.current), cheak_text_field(self.text_field_weight.current), cheak_text_field(self.text_field_time.current)]):
             rounds_list += [
                 {
-                    "id": database.get_last_id(),
+                    "id": int(database.get_last_id()),
                     "weight":self.text_field_weight.current.value,
                     "repetitions":self.text_field_repetitions.current.value,
                     "time":self.text_field_time.current.value

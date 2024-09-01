@@ -31,3 +31,20 @@ class DataBase:
         workouts = self.__client_storage.get('workouts')
         workouts += [workout]
         self.__client_storage.set("workouts",workouts)
+
+    def get_obj(self,id:int):
+        workouts = self.__client_storage.get("workouts")
+        for workout in workouts:
+            if workout["id"] == id:
+                return workout
+            for exercise in workout["exercises"]:
+                if exercise["id"] == id:
+                    return exercise
+                for round in exercise["rounds"]:
+                    if round["id"] == id:
+                        return round
+        else:
+            return None
+
+    def clear(self):
+        self.__client_storage.clear()

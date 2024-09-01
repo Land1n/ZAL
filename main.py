@@ -4,6 +4,8 @@ from src.router import Router
 
 from src.utils import view_pop
 
+from src.database import DataBase
+
 def main(page:ft.Page):
     page.title = 'ZAL'
     router = Router(page)

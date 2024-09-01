@@ -4,7 +4,7 @@ from repath import match
 
 from src.database import DataBase
 from src.utils import BackButton
-from src.workout.UI import ExerciseCard
+from src.workout.ui.exercise_read_card import ExerciseReadCard
 
 from src.workout.schemes import Workout
 
@@ -29,7 +29,7 @@ class WorkoutReadView(ft.View):
         ]
         self.lv = ft.ListView(expand=1)
         self.controls.append(self.lv)
-        self.lv.controls += [ExerciseCard(**exercise) for exercise in self.workout.exercises]
+        self.lv.controls += [ExerciseReadCard(**exercise) for exercise in self.workout.exercises]
 
         if self.workout.annotation:
             self.controls.insert(2,ft.Card(
